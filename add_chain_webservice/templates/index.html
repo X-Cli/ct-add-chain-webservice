@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='app.css') }}" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js" integrity="sha384-3ceskX3iaEnIogmQchP8opvBy3Mi7Ce34nWjpBIwVTHfGYWQS9jwHDVRnpKKHJg7" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script type="application/javascript" src="{{ url_for('static', filename='app.js') }}"></script>
+    <title>Certificate Chain Submitter</title>
+</head>
+
+<body>
+    <div class="modal fade" tabindex="-1" role="dialog" id="logresults">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">Results from logs</h4>
+                </div>
+                <div class="modal-body" id="result_container">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    <div class="alert alert-warning" role="alert" id="alert_dialog">
+        <button type="button" class="close" aria-label="Close" id="alert_close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <div id="alert_container"></div>
+    </div>
+
+    <div id="window">
+        <div id="container">
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active">
+                    <a href="#cert_field" aria-controls="cert_field" role="tab" data-toggle="tab">Copy/Paste Chain</a>
+                </li>
+                <li role="presentation">
+                    <a href="#upload_field" aria-controls="upload_field" role="tab" data-toggle="tab">Upload Chain</a>
+                </li>
+                <li role="presentation">
+                    <a href="#about" aria-controls="about" role="tab" data-toggle="tab">About</a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane fade in active" id="cert_field">
+                    <form method="POST" action="/submit" id="form_cert">
+                        <p>Enter your PEM-encoded certificate chain here:</p>
+                        <textarea id="cert_textarea" name="cert"></textarea>
+                        <p>
+                            Certificates must be ordered according to RFC5280 (end-entity certificate first, then the
+                            chain up to the trust anchor, starting with the certification authority that issued the
+                            end-entity certificate.
+                        </p>
+                        <div class="centered">
+                            <input type="submit" id="submit_cert" class="submit_button" value="Add Chain" />
+                        </div>
+                    </form>
+                </div>
+                <div role="tabpanel" class="tab-pane fade" id="upload_field">
+                    <form method="POST" action="/submit" enctype="multipart/form-data" id="form_upload">
+                        <p>Select a Certificate Chain file:</p>
+                        <div class="input_field">
+                            <input type="file" name="cert_file" id="cert_file"/>
+                        </div>
+                        <div class="centered">
+                            <input type="submit" id="submit_upload" class="submit_button" value="Add Chain" />
+                        </div>
+                    </form>
+                </div>
+                <div role="tabpanel" class="tab-pane fade" id="about">
+                    <p>This tool is about
+                        <a href="https://www.certificate-transparency.org/">Certificate Transparency</a>.
+                    </p>
+                    <p>
+                        It allows you to request insertion of a certificate chain into the Certificate Transparency
+                        logs.
+                    </p>
+                    <p>
+                        Submitted chains are first validated:
+                        <ul>
+                            <li>Is this a chain? Do the signature check?</li>
+                            <li>Is it ordered correctly, according to RFC5280?</li>
+                        </ul>
+                    </p>
+                    <p>
+                        Valid chains are then submitted to the logs that may accept them, after checking the
+                        <em>get-roots</em> API return value.</p>
+                    <p>
+                        The SCTs are cryptographically validated, stored for future verification of the proof of inclusions
+                        and provided to you for download.</p>
+                    <hr/>
+                    <p>
+                        You may use this site to submit your certificate chains. Your queries will be throttled to limit
+                        abusive behaviors.</p>
+                    <p>
+                        Throttling is based on network prefixes, so you may suffer from throttling because of an
+                        indelicate network neighbor.</p>
+                    <p>
+                        Current throttling limits are: one new query is allowed every {{ throttling_delay }} seconds.
+                        You have a burst allowance of {{ initial_bucket_token_count }} queries.
+                    </p>
+                    <p>If you have tons of certificats to submit, you may prefer to download this webapp and execute it
+                        locally. The source code is available on
+                        <a href="https://github.com/X-Cli/ct-add-chain-webservice">my GitHub account</a>.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

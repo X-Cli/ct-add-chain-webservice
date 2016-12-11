@@ -1,0 +1,49 @@
+div #window {
+    position:relative;
+    width: 100%;
+    height: 100%;
+}
+
+div #container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    box-shadow: 10px 10px 5px grey;
+    border-radius: 25px;
+    border: 2px solid #73AD21;
+    padding: 20px;
+    width: 600px;
+    min-width: 600px;
+    min-height: 600px;
+}
+
+#cert_textarea {
+    margin: auto;
+    width: 99%;
+    height: 250px;
+    min-height: 250px;
+    resize: none;
+}
+
+.tab-pane {
+    margin-top: 50px;
+}
+
+.centered {
+    width: 100%;
+    text-align: center;
+}
+
+.submit_button {
+    background-color: #4CAF50; // Green
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    //box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+    box-shadow: 10px 10px 5px grey;
+}
