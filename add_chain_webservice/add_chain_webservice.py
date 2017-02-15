@@ -53,7 +53,7 @@ import cryptography.hazmat.primitives.serialization
 # The Flask application per se ; used to bind to addr/port and serve requests
 app = flask.Flask(__name__)
 
-# You might want to uncomment the following line if you are using this behing a TLS reverse proxy
+# You might want to uncomment the following line if you are using this behind a TLS reverse proxy
 # app.config.update({
 # 	'PREFERRED_URL_SCHEME': 'https'
 # })
@@ -366,10 +366,6 @@ def get_valid_roots(log):
     :param log: the log URL as listed in log_list.json (e.g. ct.googleapis.com/rocketeer)
     :return:
     """
-    # TODO verify that it works appropriately, if the two following lines are commented!
-    # global log_root_cache_locks
-    # global get_valid_roots_global_lock
-
     if log not in log_root_cache_locks:
         get_valid_roots_global_lock.acquire()
         if log not in log_root_cache_locks:
@@ -835,7 +831,6 @@ def init_app(log_list_file, db_file, cli_throttling_delay, cli_initial_bucket_to
             pass
     dbconn.commit()
 
-
 def main():
 
     parser = argparse.ArgumentParser()
@@ -872,3 +867,16 @@ def main():
 
 if __name__ == '__main__':
     main()
+else:
+    log_list_file = os.environ['LOG_LIST_FILE']
+    db_file = os.environ['DB_FILE']
+    if 'THROTTLE' in os.environ:
+        throttle = os.environ['THROTTLE']
+    else:
+        throttle = throttling_delay
+    if 'BUCKET' in os.environ:
+        bucket = os.environ['BUCKET']
+    else:
+        bucket = initial_bucket_token_count
+
+    init_app(log_list_file, db_file, throttle, bucket)
